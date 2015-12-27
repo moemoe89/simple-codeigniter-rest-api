@@ -12,7 +12,7 @@ class MyModel extends CI_Model {
         if($client_service == $this->client_service && $auth_key == $this->auth_key){
             return true;
         } else {
-            return false;
+            return json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
         }
     }
 
