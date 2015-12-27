@@ -7,7 +7,7 @@ class Book extends CI_Controller {
 	{
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method != 'GET'){
-			$this->json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		} else {
 			$check_auth_client = $this->MyModel->check_auth_client();
 			if($check_auth_client == true){
@@ -17,9 +17,9 @@ class Book extends CI_Controller {
 		        } else {
 		        	$resp = $response;
 		        } 
-	    		$this->json_output($response['status'],$resp);
+	    		json_output($response['status'],$resp);
 			} else {
-				$this->json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
+				json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
 			}
 		}
 	}
@@ -28,7 +28,7 @@ class Book extends CI_Controller {
 	{
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method != 'GET' || $this->uri->segment(3) == ''){
-			$this->json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		} else {
 			$check_auth_client = $this->MyModel->check_auth_client();
 			if($check_auth_client == true){
@@ -38,9 +38,9 @@ class Book extends CI_Controller {
 		        } else {
 		        	$resp = $response;
 		        }
-				$this->json_output($response['status'],$resp);
+				json_output($response['status'],$resp);
 			} else {
-				$this->json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
+				json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
 			}
 		}
 	}
@@ -49,7 +49,7 @@ class Book extends CI_Controller {
 	{
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method != 'POST'){
-			$this->json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		} else {
 			$check_auth_client = $this->MyModel->check_auth_client();
 			if($check_auth_client == true){
@@ -66,9 +66,9 @@ class Book extends CI_Controller {
 		        } else {
 		        	$resp = $response;
 		        }
-				$this->json_output($respStatus,$resp);
+				json_output($respStatus,$resp);
 			} else {
-				$this->json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
+				json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
 			}
 		}
 	}
@@ -77,7 +77,7 @@ class Book extends CI_Controller {
 	{
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method != 'PUT' || $this->uri->segment(3) == ''){
-			$this->json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		} else {
 			$check_auth_client = $this->MyModel->check_auth_client();
 			if($check_auth_client == true){
@@ -95,9 +95,9 @@ class Book extends CI_Controller {
 		        } else {
 		        	$resp = $response;
 		        }
-				$this->json_output($respStatus,$resp);
+				json_output($respStatus,$resp);
 			} else {
-				$this->json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
+				json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
 			}
 		}
 	}
@@ -106,7 +106,7 @@ class Book extends CI_Controller {
 	{
 		$method = $_SERVER['REQUEST_METHOD'];
 		if($method != 'DELETE' || $this->uri->segment(3) == ''){
-			$this->json_output(400,array('status' => 400,'message' => 'Bad request.'));
+			json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		} else {
 			$check_auth_client = $this->MyModel->check_auth_client();
 			if($check_auth_client == true){
@@ -116,19 +116,11 @@ class Book extends CI_Controller {
 		        } else {
 		        	$resp = $response;
 		        }
-				$this->json_output($response['status'],$resp);
+				json_output($response['status'],$resp);
 			} else {
-				$this->json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
+				json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
 			}
 		}
-	}
-
-	public function json_output($statusHeader,$response)
-	{
-		$this->output->set_status_header($statusHeader);
-		$this->output
-			 	->set_content_type('application/json')
-				->set_output(json_encode($response));
 	}
 
 }
