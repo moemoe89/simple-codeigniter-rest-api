@@ -19,12 +19,8 @@ class Book extends CI_Controller {
 		        $response = $this->MyModel->auth();
 		        if($response['status'] == 200){
 		        	$resp = $this->MyModel->book_all_data();
-		        } else {
-		        	$resp = $response;
-		        } 
-	    		json_output($response['status'],$resp);
-			} else {
-				json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
+	    			json_output($response['status'],$resp);
+		        }
 			}
 		}
 	}
@@ -40,12 +36,8 @@ class Book extends CI_Controller {
 		        $response = $this->MyModel->auth();
 		        if($response['status'] == 200){
 		        	$resp = $this->MyModel->book_detail_data($id);
-		        } else {
-		        	$resp = $response;
+					json_output($response['status'],$resp);
 		        }
-				json_output($response['status'],$resp);
-			} else {
-				json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
 			}
 		}
 	}
@@ -68,12 +60,8 @@ class Book extends CI_Controller {
 					} else {
 		        		$resp = $this->MyModel->book_create_data($params);
 					}
-		        } else {
-		        	$resp = $response;
+					json_output($respStatus,$resp);
 		        }
-				json_output($respStatus,$resp);
-			} else {
-				json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
 			}
 		}
 	}
@@ -97,12 +85,8 @@ class Book extends CI_Controller {
 					} else {
 		        		$resp = $this->MyModel->book_update_data($id,$params);
 					}
-		        } else {
-		        	$resp = $response;
+					json_output($respStatus,$resp);
 		        }
-				json_output($respStatus,$resp);
-			} else {
-				json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
 			}
 		}
 	}
@@ -118,12 +102,8 @@ class Book extends CI_Controller {
 		        $response = $this->MyModel->auth();
 		        if($response['status'] == 200){
 		        	$resp = $this->MyModel->book_delete_data($id);
-		        } else {
-		        	$resp = $response;
+					json_output($response['status'],$resp);
 		        }
-				json_output($response['status'],$resp);
-			} else {
-				json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
 			}
 		}
 	}

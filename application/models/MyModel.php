@@ -12,7 +12,7 @@ class MyModel extends CI_Model {
         if($client_service == $this->client_service && $auth_key == $this->auth_key){
             return true;
         } else {
-            return false;
+            return json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
         }
     }
 
@@ -58,10 +58,10 @@ class MyModel extends CI_Model {
         $token     = $this->input->get_request_header('Authorization', TRUE);
         $q  = $this->db->select('expired_at')->from('users_authentication')->where('users_id',$users_id)->where('token',$token)->get()->row();
         if($q == ""){
-            return array('status' => 401,'message' => 'Unauthorized.');
+            return json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
         } else {
             if($q->expired_at < date('Y-m-d H:i:s')){
-                return array('status' => 401,'message' => 'Your session has been expired.');
+                return json_output(401,array('status' => 401,'message' => 'Your session has been expired.'));
             } else {
                 $updated_at = date('Y-m-d H:i:s');
                 $expired_at = date("Y-m-d H:i:s", strtotime('+12 hours'));

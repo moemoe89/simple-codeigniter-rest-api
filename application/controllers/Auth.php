@@ -17,8 +17,6 @@ class Auth extends CI_Controller {
 		        
 		        $response = $this->MyModel->login($username,$password);
 				json_output($response['status'],$response);
-			} else {
-				json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
 			}
 		}
 	}
@@ -33,8 +31,6 @@ class Auth extends CI_Controller {
 			if($check_auth_client == true){
 		        $response = $this->MyModel->logout();
 				json_output($response['status'],$response);
-			} else {
-				json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
 			}
 		}
 	}
