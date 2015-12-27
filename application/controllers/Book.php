@@ -27,7 +27,7 @@ class Book extends CI_Controller {
 	public function detail($id)
 	{
 		$method = $_SERVER['REQUEST_METHOD'];
-		if($method != 'GET' || $this->uri->segment(3) == ''){
+		if($method != 'GET' || $this->uri->segment(3) == '' || is_numeric($this->uri->segment(3)) == FALSE){
 			json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		} else {
 			$check_auth_client = $this->MyModel->check_auth_client();
@@ -76,7 +76,7 @@ class Book extends CI_Controller {
 	public function update($id)
 	{
 		$method = $_SERVER['REQUEST_METHOD'];
-		if($method != 'PUT' || $this->uri->segment(3) == ''){
+		if($method != 'PUT' || $this->uri->segment(3) == '' || is_numeric($this->uri->segment(3)) == FALSE){
 			json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		} else {
 			$check_auth_client = $this->MyModel->check_auth_client();
@@ -105,7 +105,7 @@ class Book extends CI_Controller {
 	public function delete($id)
 	{
 		$method = $_SERVER['REQUEST_METHOD'];
-		if($method != 'DELETE' || $this->uri->segment(3) == ''){
+		if($method != 'DELETE' || $this->uri->segment(3) == '' || is_numeric($this->uri->segment(3)) == FALSE){
 			json_output(400,array('status' => 400,'message' => 'Bad request.'));
 		} else {
 			$check_auth_client = $this->MyModel->check_auth_client();
