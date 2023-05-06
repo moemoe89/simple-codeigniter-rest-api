@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
+date_default_timezone_set('America/Guayaquil');
 class MyModel extends CI_Model {
 
     var $client_service = "frontend-client";
@@ -25,19 +25,46 @@ class MyModel extends CI_Model {
             $hashed_password = $q->password;
             $id              = $q->id;
             if (hash_equals($hashed_password, crypt($password, $hashed_password))) {
-               $last_login = date('Y-m-d H:i:s');
-               $token = crypt(substr( md5(rand()), 0, 7));
-               $expired_at = date("Y-m-d H:i:s", strtotime('+12 hours'));
-               $this->db->trans_start();
-               $this->db->where('id',$id)->update('users',array('last_login' => $last_login));
-               $this->db->insert('users_authentication',array('users_id' => $id,'token' => $token,'expired_at' => $expired_at));
-               if ($this->db->trans_status() === FALSE){
-                  $this->db->trans_rollback();
-                  return array('status' => 500,'message' => 'Internal server error.');
-               } else {
-                  $this->db->trans_commit();
-                  return array('status' => 200,'message' => 'Successfully login.','id' => $id, 'token' => $token);
-               }
+                $obj_ua  = $this->db->from('users_authentication')->where('users_id',$q->id)->where('estado = 1')->get();
+                
+                $last_login = date('Y-m-d H:i:s');
+                
+                if($obj_ua->num_rows() > 0){
+                    $ua=$obj_ua->row();
+                    //print_r($ua);
+                    //echo "<br/>".$last_login;
+                    //echo "<br/>".$ua->expired_at;
+                    if(strtotime($last_login) <= strtotime($ua->expired_at) ){
+                        return array('status' => 200,'message' => 'Token was generated which expires on '.$ua->expired_at,'user' => $username, 'token' => $ua->token);
+                    }else{
+                        $this->db->where('users_id',$id)->update('users_authentication',array('estado' => 0));
+                        $token = crypt(substr( md5(rand()), 0, 7),'$5$rounds=5000$fragatausesystringforsalt$');
+                        echo $expired_at = date("Y-m-d H:i:s", strtotime('+12 hours'));
+                        $this->db->trans_start();
+                        $this->db->where('id',$id)->update('users',array('last_login' => $last_login));
+                        $this->db->insert('users_authentication',array('users_id' => $id,'token' => $token,'expired_at' => $expired_at));
+                        if ($this->db->trans_status() === FALSE){
+                            $this->db->trans_rollback();
+                            return array('status' => 500,'message' => 'Internal server error.');
+                        } else {
+                            $this->db->trans_commit();
+                            return array('status' => 200,'message' => 'Successfully login.','user' => $username, 'token' => $token);
+                        }
+                    }                    
+                }else{   
+                    $token = crypt(substr( md5(rand()), 0, 7),'$5$rounds=5000$fragatausesystringforsalt$');
+                    $expired_at = date("Y-m-d H:i:s", strtotime('+12 hours'));
+                    $this->db->trans_start();
+                    $this->db->where('id',$id)->update('users',array('last_login' => $last_login));
+                    $this->db->insert('users_authentication',array('users_id' => $id,'token' => $token,'expired_at' => $expired_at));
+                    if ($this->db->trans_status() === FALSE){
+                        $this->db->trans_rollback();
+                        return array('status' => 500,'message' => 'Internal server error.');
+                    } else {
+                        $this->db->trans_commit();
+                        return array('status' => 200,'message' => 'Successfully login.','user' => $username, 'token' => $token);
+                    }
+                }
             } else {
                return array('status' => 204,'message' => 'Wrong password.');
             }
@@ -46,7 +73,7 @@ class MyModel extends CI_Model {
 
     public function logout()
     {
-        $users_id  = $this->input->get_request_header('User-ID', TRUE);
+        $users_id  = $this->input->get_request_header('User', TRUE);
         $token     = $this->input->get_request_header('Authorization', TRUE);
         $this->db->where('users_id',$users_id)->where('token',$token)->delete('users_authentication');
         return array('status' => 200,'message' => 'Successfully logout.');
@@ -54,18 +81,19 @@ class MyModel extends CI_Model {
 
     public function auth()
     {
-        $users_id  = $this->input->get_request_header('User-ID', TRUE);
+        $user  = $this->input->get_request_header('User', TRUE);
         $token     = $this->input->get_request_header('Authorization', TRUE);
-        $q  = $this->db->select('expired_at')->from('users_authentication')->where('users_id',$users_id)->where('token',$token)->get()->row();
+        $o  = $this->db->select('id')->from('users')->where('username',$user)->get()->row();
+        $q  = $this->db->select('expired_at')->from('users_authentication')->where('users_id',$o->id)->where('token',$token)->get()->row();
         if($q == ""){
             return json_output(401,array('status' => 401,'message' => 'Unauthorized.'));
         } else {
-            if($q->expired_at < date('Y-m-d H:i:s')){
+            if(strtotime($q->expired_at) < strtotime(date('Y-m-d H:i:s'))){echo $q->expired_at ."<br/>".date('Y-m-d H:i:s');
                 return json_output(401,array('status' => 401,'message' => 'Your session has been expired.'));
             } else {
                 $updated_at = date('Y-m-d H:i:s');
                 $expired_at = date("Y-m-d H:i:s", strtotime('+12 hours'));
-                $this->db->where('users_id',$users_id)->where('token',$token)->update('users_authentication',array('expired_at' => $expired_at,'updated_at' => $updated_at));
+                $this->db->where('users_id',$o->id)->where('token',$token)->update('users_authentication',array('expired_at' => $expired_at,'updated_at' => $updated_at));
                 return array('status' => 200,'message' => 'Authorized.');
             }
         }
