@@ -6,7 +6,9 @@ Simple source code for learning basic backend developer using REST API (login, C
 
 # Setup
 Download or clone [Master File](simple-codeigniter-rest-api)
-and then config & import MySQL database 
+and then config & import database 
+-MySQL
+-PostgreSQL
 
 You can use [POSTMAN](https://www.getpostman.com/) or anything else for simulate frontend
 
